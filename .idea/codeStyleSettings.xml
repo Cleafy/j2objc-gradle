@@ -6,6 +6,9 @@
         <GroovyCodeStyleSettings>
           <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="20" />
         </GroovyCodeStyleSettings>
+        <MarkdownNavigatorCodeStyleSettings>
+          <option name="RIGHT_MARGIN" value="72" />
+        </MarkdownNavigatorCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
