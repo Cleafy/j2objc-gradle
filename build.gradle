@@ -35,7 +35,7 @@ task wrapper(type: Wrapper) {
     distributionUrl = 'https://services.gradle.org/distributions/gradle-2.4-all.zip'
 }
 
-group = 'com.github.j2objccontrib.j2objcgradle'
+group = 'com.cleafy'
 
 // A suffix of -SNAPSHOT means this is not an official release of the
 // system, but built from an intermediate source tree.  Instructions:
@@ -51,8 +51,8 @@ test {
 }
 
 pluginBundle {
-    website = 'https://www.github.com/j2objc-contrib/j2objc-gradle/'
-    vcsUrl = 'https://github.com/j2objc-contrib/j2objc-gradle'
+    website = 'https://www.github.com/cleafy/j2objc-gradle/'
+    vcsUrl = 'https://github.com/cleafy/j2objc-gradle'
     description =
             "Gradle Plugin for J2ObjC, which is an open-source tool from Google that translates " +
             "Java source code to Objective-C for the iOS (iPhone/iPad) platform. The plugin is " +
@@ -65,7 +65,7 @@ pluginBundle {
 
     plugins {
         j2objcPlugin {
-            id = 'com.github.j2objccontrib.j2objcgradle'
+            id = 'com.cleafy.j2objc'
             displayName = 'J2ObjC Gradle Plugin'
         }
     }
@@ -78,6 +78,6 @@ project.tasks.all {
 }
 
 buildStamp {
-    repoBaseUrl "https://github.com/j2objc-contrib/j2objc-gradle/tree/"
-    packageName "com.github.j2objccontrib.j2objcgradle"
+    repoBaseUrl "https://github.com/cleafy/j2objc-gradle/tree/"
+    packageName "com.cleafy.j2objc"
 }
