@@ -205,6 +205,7 @@ class NativeCompilation {
                                 // exportedHeaders, this serves solely as a signifier for now.
                                 exportedHeaders {
                                     srcDirs "${srcGenMainDir}"
+                                    srcDirs j2objcConfig.extraObjcHeadersDirs
                                     include '**/*.h'
                                 }
                             }

@@ -577,6 +577,25 @@ class J2objcConfig {
             this.extraObjcSrcDirs += arg
         }
     }
+
+    /**
+     * Directories of Objective-C headers to compile in addition to the
+     * translated source.
+     */
+    String[] extraObjcHeadersDirs = []
+
+    /**
+     * Add directories of Objective-C headers to export in addition to the
+     * translated ones.
+     *
+     * @param extraObjcHeaderDirs add directories for Objective-C source to be compiled
+     */
+    void extraObjcHeadersDirs(String... extraObjcHeaderDirs) {
+        verifyArgs('extraObjcHeaderDirs', true, extraObjcHeaderDirs)
+        for (String arg in extraObjcHeaderDirs) {
+            this.extraObjcHeadersDirs += arg
+        }
+    }
     /**
      * Additional arguments to pass to the native compiler.
      */
