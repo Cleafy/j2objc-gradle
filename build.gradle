@@ -79,5 +79,5 @@ project.tasks.all {
 
 buildStamp {
     repoBaseUrl "https://github.com/cleafy/j2objc-gradle/tree/"
-    packageName "com.cleafy.j2objc"
+    packageName "com.github.j2objccontrib.j2objcgradle"
 }
