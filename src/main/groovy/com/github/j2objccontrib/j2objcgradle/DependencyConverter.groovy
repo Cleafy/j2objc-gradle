@@ -108,6 +108,11 @@ class DependencyConverter {
         project.logger.debug("j2objc dependency converter: Linking Project: $dep")
         project.configurations.getByName(isTest ? 'j2objcTestLinkage' : 'j2objcLinkage').dependencies.add(
                 dep.copy())
+
+        dep.dependencyProject.configurations.getByName('j2objcLinkage')
+                .dependencies.findAll {d -> d instanceof ProjectDependency}.each {
+            visitProjectDependency(it as ProjectDependency, isTest)
+        }
     }
 
     protected void visitExternalModuleDependency(ExternalModuleDependency dep, boolean isTest) {
