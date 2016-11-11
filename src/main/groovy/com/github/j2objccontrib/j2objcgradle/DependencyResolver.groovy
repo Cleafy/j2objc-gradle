@@ -53,7 +53,6 @@ import org.gradle.api.tasks.util.PatternSet
  * </li>
  * </ul>
  */
-@PackageScope
 @CompileStatic
 class DependencyResolver {
 
