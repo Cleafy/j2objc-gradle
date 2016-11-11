@@ -23,6 +23,7 @@ import groovy.transform.TypeCheckingMode
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.util.PatternSet
 import org.gradle.util.ConfigureUtil
 
@@ -83,6 +84,24 @@ class J2objcConfig {
      * who know what they are doing and may wish to use a custom-build J2ObjC distribution.
      */
     boolean skipJ2objcVerification = false;
+
+    /**
+     * sources to translate
+     */
+    List<String> mainSourceDirs = [];
+
+    void mainSourceDirs(String... dirs) {
+        mainSourceDirs.addAll(dirs);
+    }
+
+    /**
+     * tests to translate
+     */
+    List<String> testSourceDirs = [];
+
+    void testSourceDirs(String... dirs) {
+        testSourceDirs.addAll(dirs);
+    }
 
     /**
      * Where to assemble generated main libraries.

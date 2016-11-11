@@ -55,9 +55,13 @@ class TranslateTask extends DefaultTask {
     // Source files part of the Java main sourceSet.
     @InputFiles
     FileCollection getMainSrcFiles() {
-        FileTree allFiles = Utils.srcSet(project, 'main', 'java')
-        if (J2objcConfig.from(project).translatePattern != null) {
-            allFiles = allFiles.matching(J2objcConfig.from(project).translatePattern)
+        J2objcConfig config = J2objcConfig.from(project);
+
+        FileTree allFiles = config.mainSourceDirs.isEmpty() ?
+                            Utils.srcSet(project, 'main', 'java') :
+                            Utils.javaTrees(project, config.mainSourceDirs);
+        if (config.translatePattern != null) {
+            allFiles = allFiles.matching(config.translatePattern)
         }
         FileCollection ret = allFiles.plus(Utils.javaTrees(project, getGeneratedSourceDirs()))
         ret = Utils.mapSourceFiles(project, ret, getTranslateSourceMapping())
@@ -67,9 +71,13 @@ class TranslateTask extends DefaultTask {
     // Source files part of the Java test sourceSet.
     @InputFiles
     FileCollection getTestSrcFiles() {
-        FileTree allFiles = Utils.srcSet(project, 'test', 'java')
-        if (J2objcConfig.from(project).translatePattern != null) {
-            allFiles = allFiles.matching(J2objcConfig.from(project).translatePattern)
+        J2objcConfig config = J2objcConfig.from(project);
+
+        FileTree allFiles = config.testSourceDirs.isEmpty() ?
+                            Utils.srcSet(project, 'test', 'java') :
+                            Utils.javaTrees(project, config.testSourceDirs);
+        if (config.translatePattern != null) {
+            allFiles = allFiles.matching(config.translatePattern)
         }
         FileCollection ret = allFiles
         ret = Utils.mapSourceFiles(project, ret, getTranslateSourceMapping())
