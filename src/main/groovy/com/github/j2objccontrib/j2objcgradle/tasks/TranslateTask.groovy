@@ -16,7 +16,6 @@
 
 package com.github.j2objccontrib.j2objcgradle.tasks
 
-import com.github.j2objccontrib.j2objcgradle.DependencyResolver
 import com.github.j2objccontrib.j2objcgradle.J2objcConfig
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
@@ -24,7 +23,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.internal.file.UnionFileCollection
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
@@ -62,11 +60,6 @@ class TranslateTask extends DefaultTask {
         FileTree allFiles = config.mainSourceDirs.isEmpty() ?
                             Utils.srcSet(project, 'main', 'java') :
                             Utils.javaTrees(project, config.mainSourceDirs);
-
-        Copy copy = project.tasks.getByName(DependencyResolver.MAIN_EXTRACTION_TASK_NAME) as Copy
-
-        allFiles += Utils.javaTrees(project, [copy.getDestinationDir().path])
-
         if (config.translatePattern != null) {
             allFiles = allFiles.matching(config.translatePattern)
         }
@@ -83,11 +76,6 @@ class TranslateTask extends DefaultTask {
         FileTree allFiles = config.testSourceDirs.isEmpty() ?
                             Utils.srcSet(project, 'test', 'java') :
                             Utils.javaTrees(project, config.testSourceDirs);
-
-        Copy copy = project.tasks.getByName(DependencyResolver.TEST_EXTRACTION_TASK_NAME) as Copy
-
-        allFiles += Utils.javaTrees(project, [copy.getDestinationDir().path])
-
         if (config.translatePattern != null) {
             allFiles = allFiles.matching(config.translatePattern)
         }

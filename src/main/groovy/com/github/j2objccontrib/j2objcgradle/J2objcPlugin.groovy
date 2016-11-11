@@ -127,7 +127,7 @@ class J2objcPlugin implements Plugin<Project> {
                 }
             }
 
-            DependencyResolver.createExtractionTasks(project)
+            DependencyResolver.configureSourceSets(project)
 
             // Produces a modest amount of output
             logging.captureStandardOutput LogLevel.INFO
@@ -144,7 +144,7 @@ class J2objcPlugin implements Plugin<Project> {
             // there
             // Dependency may be added in project.plugins.withType for Java or Android plugin
             tasks.create(name: 'j2objcTranslate', type: TranslateTask,
-                    dependsOn: ['j2objcPreBuild', DependencyResolver.MAIN_EXTRACTION_TASK_NAME, DependencyResolver.TEST_EXTRACTION_TASK_NAME]) {
+                    dependsOn: 'j2objcPreBuild') {
                 group 'build'
                 description "Translates all the java source files in to Objective-C using 'j2objc'"
                 // Output directories of 'j2objcTranslate', input for all other tasks

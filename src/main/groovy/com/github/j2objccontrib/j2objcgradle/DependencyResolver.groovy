@@ -25,7 +25,9 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.SelfResolvingDependency
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.util.PatternSet
 /**
@@ -94,25 +96,31 @@ class DependencyResolver {
         j2objcConfig.enableBuildClosure()
     }
 
-    public static final String MAIN_EXTRACTION_TASK_NAME = 'j2objcTranslatedMainLibraryExtraction'
-    public static final String TEST_EXTRACTION_TASK_NAME = 'j2objcTranslatedTestLibraryExtraction'
+    private static final String MAIN_EXTRACTION_TASK_NAME = 'j2objcTranslatedMainLibraryExtraction'
+    private static final String TEST_EXTRACTION_TASK_NAME = 'j2objcTranslatedTestLibraryExtraction'
 
     /**
      * Adds to the main java sourceSet a to-be-generated directory that contains the contents
      * of `j2objcTranslation` dependency libraries (if any).
      */
-    static void createExtractionTasks(Project project) {
-        createExtractionTask(project, "${project.buildDir}/mainTranslationExtraction", MAIN_EXTRACTION_TASK_NAME)
-        createExtractionTask(project, "${project.buildDir}/testTranslationExtraction", TEST_EXTRACTION_TASK_NAME)
+    static void configureSourceSets(Project project) {
+        configureSourceSet(project, "${project.buildDir}/mainTranslationExtraction", SourceSet.MAIN_SOURCE_SET_NAME,
+                MAIN_EXTRACTION_TASK_NAME)
+        configureSourceSet(project, "${project.buildDir}/testTranslationExtraction", SourceSet.TEST_SOURCE_SET_NAME,
+                TEST_EXTRACTION_TASK_NAME)
     }
 
-    protected static void createExtractionTask(Project project, String dir, String taskName) {
-        project.tasks.create(taskName, Copy,
-            { Copy task ->
-                task.into(project.file(dir))
-                // If two libraries define the same file, fail early.
-                task.duplicatesStrategy = DuplicatesStrategy.FAIL
-            })
+    protected static void configureSourceSet(Project project, String dir, String sourceSetName, String taskName) {
+        JavaPluginConvention javaConvention = project.getConvention().getPlugin(JavaPluginConvention)
+        SourceSet sourceSet = javaConvention.sourceSets.findByName(sourceSetName)
+        sourceSet.java.srcDirs(project.file(dir))
+        Copy copy = project.tasks.create(taskName, Copy,
+                { Copy task ->
+                    task.into(project.file(dir))
+                    // If two libraries define the same file, fail early.
+                    task.duplicatesStrategy = DuplicatesStrategy.FAIL
+                })
+        project.tasks.getByName(sourceSet.compileJavaTaskName).dependsOn(copy)
     }
 
     // Copy contents of sourceJarFile to build/translationExtraction
