@@ -329,7 +329,8 @@ class TranslateTask extends DefaultTask {
         ])
         // TODO: comment explaining ${project.buildDir}/classes
         String classpathArg = Utils.joinedPathArg(classpathFiles) +
-                              Utils.pathSeparator() + "${project.buildDir}/classes"
+                              Utils.pathSeparator() + "${project.buildDir}/classes/main" +
+                            Utils.pathSeparator() + "${project.buildDir}/classes/test"
 
         // Source files arguments
         List<String> srcFilesArgs = []
