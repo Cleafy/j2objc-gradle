@@ -51,8 +51,12 @@ class TestTask extends DefaultTask {
     FileTree getTestSrcFiles() {
         // Note that neither testPattern nor translatePattern need to be @Input methods because they are solely
         // inputs to this method, which is already an input via @InputFiles.
-        FileTree allFiles = Utils.srcSet(project, 'test', 'java')
         J2objcConfig config = J2objcConfig.from(project)
+
+        FileTree allFiles = config.testSourceDirs.isEmpty() ?
+                            Utils.srcSet(project, 'test', 'java') :
+                            Utils.javaTrees(project, config.testSourceDirs);
+
         if (config.translatePattern != null) {
             allFiles = allFiles.matching(config.translatePattern)
         }
@@ -236,7 +240,7 @@ class TestTask extends DefaultTask {
             // Comments indicate the value at the end of that statement
             String testName = proj.relativePath(file)  // src/test/java/com/example/dir/SomeTest.java
                             .replace('\\', '/')  // Windows backslashes converted to forward slash
-                            .replace('src/test/java/', '')  // com/example/dir/SomeTest.java
+                            .replaceAll('.*/java/', '')  // com/example/dir/SomeTest.java
                             .replace('.java', '')  // com/example/dir/SomeTest
                             .replace('/', '.')  // com.example.dir.SomeTest
 

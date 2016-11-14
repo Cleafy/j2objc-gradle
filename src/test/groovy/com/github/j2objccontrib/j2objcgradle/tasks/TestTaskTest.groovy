@@ -60,7 +60,8 @@ class TestTaskTest {
         FileCollection srcFiles = proj.files([
                 "${proj.rootDir}/src/test/java/com/example/parent/ParentClass.java",
                 "${proj.rootDir}/src/test/java/com/example/parent/subdir/SubdirClass.java",
-                "${proj.rootDir}/src/test/java/com/example/other/OtherClass.java"])
+                "${proj.rootDir}/src/test/java/com/example/other/OtherClass.java",
+                "${proj.rootDir}/gen/test/java/com/example/generated/OtherClass.java"])
         Properties noPackagePrefixes = new Properties()
 
         List<String> testNames = TestTask.getTestNames(proj, srcFiles, noPackagePrefixes)
@@ -68,7 +69,8 @@ class TestTaskTest {
         List<String> expectedTestNames = [
                 "com.example.parent.ParentClass",
                 "com.example.parent.subdir.SubdirClass",
-                "com.example.other.OtherClass"]
+                "com.example.other.OtherClass",
+                "com.example.generated.OtherClass"]
 
         assert expectedTestNames == testNames
     }
