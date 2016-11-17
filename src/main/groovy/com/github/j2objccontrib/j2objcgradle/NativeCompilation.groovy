@@ -224,6 +224,11 @@ class NativeCompilation {
                         binaries.all {
                             beforeProjects.each { Project beforeProject ->
                                 lib project: beforeProject.path, library: "${beforeProject.name}-j2objc", linkage: 'static'
+                                // should use NativeLibraryBinary.headerDirs but it is not available yet ( bad lifecycle usage )
+                                objcCompiler.args "-I${beforeProject.buildDir}/j2objcSrcGenMain"
+                                for(String path : J2objcConfig.from(beforeProject).extraObjcHeadersDirs) {
+                                    objcCompiler.args "-I${beforeProject.file(path)}"
+                                }
                             }
                             j2objcConfig.extraNativeLibs.each { Map nativeLibSpec ->
                                 lib nativeLibSpec
@@ -251,9 +256,19 @@ class NativeCompilation {
                             // Resolve dependencies from all java j2objc projects using the compiled static libs.
                             beforeProjects.each { Project beforeProject ->
                                 lib project: beforeProject.path, library: "${beforeProject.name}-j2objc", linkage: 'static'
+                                // should use NativeLibraryBinary.headerDirs but it is not available yet ( bad lifecycle usage )
+                                objcCompiler.args "-I${beforeProject.buildDir}/j2objcSrcGenMain"
+                                for(String path : J2objcConfig.from(beforeProject).extraObjcHeadersDirs) {
+                                    objcCompiler.args "-I${beforeProject.file(path)}"
+                                }
                             }
                             beforeTestProjects.each { Project beforeProject ->
                                 lib project: beforeProject.path, library: "${beforeProject.name}-j2objc", linkage: 'static'
+                                // should use NativeLibraryBinary.headerDirs but it is not available yet ( bad lifecycle usage )
+                                objcCompiler.args "-I${beforeProject.buildDir}/j2objcSrcGenMain"
+                                for(String path : J2objcConfig.from(beforeProject).extraObjcHeadersDirs) {
+                                    objcCompiler.args "-I${beforeProject.file(path)}"
+                                }
                             }
                             j2objcConfig.extraNativeLibs.each { Map nativeLibSpec ->
                                 lib nativeLibSpec
