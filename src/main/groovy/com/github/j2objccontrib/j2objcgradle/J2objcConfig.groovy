@@ -23,7 +23,6 @@ import groovy.transform.TypeCheckingMode
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.util.PatternSet
 import org.gradle.util.ConfigureUtil
 
@@ -631,6 +630,24 @@ class J2objcConfig {
             this.extraObjcCompilerArgs += arg
         }
     }
+
+    /**
+     * Additional arguments to pass to the native compiler.
+     */
+    // Native build accepts empty array but throws exception on empty List<String>
+    String[] extraIosBuildArgs = []
+    /**
+     * Add arguments to pass to the native compiler when building for IOS.
+     *
+     * @param extraIosBuildArgs add arguments to pass to the native compiler.
+     */
+    void extraIosBuildArgs(String... extraIosBuildArgs) {
+        verifyArgs('extraIosBuildArgs', true, extraIosBuildArgs)
+        for (String arg in extraIosBuildArgs) {
+            this.extraIosBuildArgs += arg
+        }
+    }
+
     /**
      * Additional arguments to pass to the native linker.
      */

@@ -89,11 +89,13 @@ class NativeCompilation {
                     case TargetSpec.TARGET_IOS_DEVICE:
                         clangArgs += iphoneClangArgs
                         clangArgs += ["-miphoneos-version-min=${config.minVersionIos}"]
+                        clangArgs += config.extraIosBuildArgs
                         linkerArgs += ["-L$j2objcPath/lib"]
                         break
                     case TargetSpec.TARGET_IOS_SIMULATOR:
                         clangArgs += simulatorClangArgs
                         clangArgs += ["-mios-simulator-version-min=${config.minVersionIos}"]
+                        clangArgs += config.extraIosBuildArgs
                         linkerArgs += ["-L$j2objcPath/lib"]
                         break
                     case TargetSpec.TARGET_OSX:
@@ -296,7 +298,7 @@ class NativeCompilation {
                     // TODO: Consider making this configuration easier using plugin extension.
                     // If we do that, however, we will become inconsistent with Gradle Objective-C building.
                     objcCompiler.args "-I$j2objcPath/include"
-                    objcCompiler.args '-Werror', '-Wno-parentheses', '-fno-strict-overflow'
+                    objcCompiler.args '-Wno-parentheses', '-fno-strict-overflow', '-Wno-nullability-completeness'
                     objcCompiler.args '-std=c11'
                     objcCompiler.args j2objcConfig.extraObjcCompilerArgs
 
