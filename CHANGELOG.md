@@ -27,6 +27,51 @@ Code quality:
 * TBD
 
 
+## v0.7.10
+Fixes:
+
+  - project dependency visitation lifecycle
+
+## v0.7.9
+New features:
+
+  - Allow custom compiler arg on iOS only builds 
+
+## v0.7.8
+Fixes:
+
+  - Not imported project libraries headers
+
+## v0.7.7
+Fixes:
+
+  - Wrong classpath for java classes
+
+## v0.7.6
+Fixes:
+
+  - Non-standard location test sources
+
+## v0.7.2
+New features:
+
+  - Fully customizable objc sources
+
+## v0.7.1
+New features:
+
+  - Use j2objc 1.2
+  - Customizable obj headers
+
+Fixes:
+
+  - project dependency visitation algorithm
+  
+
+
+## v0.7.0
+Took ownership of the project.
+
 ## v0.6.0-alpha
 New functionality:
 * Support for arbitrary count of files that otherwise exceeds command line max args #574
