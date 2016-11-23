@@ -15,6 +15,8 @@
  */
 
 package com.github.j2objccontrib.j2objcgradle
+
+import com.github.j2objccontrib.j2objcgradle.tasks.Utils
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.InvalidUserDataException
@@ -158,20 +160,7 @@ class DependencyResolver {
         // We need to have j2objcConfig on the beforeProject configured first.
         project.evaluationDependsOn beforeProject.path
 
-        if (!beforeProject.plugins.hasPlugin(JavaPlugin)) {
-            String message = "$beforeProject is not a Java project.\n" +
-                             "dependsOnJ2ObjcLib can only automatically resolve a\n" +
-                             "dependency on a Java project also converted using the\n" +
-                             "J2ObjC Gradle Plugin."
-            throw new InvalidUserDataException(message)
-        }
-
-        if (!beforeProject.plugins.hasPlugin(J2objcPlugin)) {
-            String message = "$beforeProject does not use the J2ObjC Gradle Plugin.\n" +
-                             "dependsOnJ2objcLib can be used only with another project that\n" +
-                             "itself uses the J2ObjC Gradle Plugin."
-            throw new InvalidUserDataException(message)
-        }
+        Utils.requireJ2ObjcAndJavaPlugin(beforeProject)
 
         // Build and test the java/objc libraries and the objc headers of
         // the other project first.

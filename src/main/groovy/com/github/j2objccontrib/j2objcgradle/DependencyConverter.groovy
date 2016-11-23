@@ -16,6 +16,7 @@
 
 package com.github.j2objccontrib.j2objcgradle
 
+import com.github.j2objccontrib.j2objcgradle.tasks.Utils
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import org.gradle.api.InvalidUserDataException
@@ -109,7 +110,14 @@ class DependencyConverter {
         project.configurations.getByName(isTest ? 'j2objcTestLinkage' : 'j2objcLinkage').dependencies.add(
                 dep.copy())
 
-        dep.dependencyProject.configurations.getByName('j2objcLinkage')
+        def beforeProject = dep.dependencyProject
+
+        // We need to have j2objcConfig on the beforeProject configured first.
+        project.evaluationDependsOn beforeProject.path
+
+        Utils.requireJ2ObjcAndJavaPlugin(beforeProject)
+
+        beforeProject.configurations.getByName('j2objcLinkage')
                 .dependencies.findAll {d -> d instanceof ProjectDependency}.each {
             visitProjectDependency(it as ProjectDependency, isTest)
         }

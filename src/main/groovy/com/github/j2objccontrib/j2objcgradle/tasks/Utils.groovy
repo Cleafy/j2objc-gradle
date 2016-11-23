@@ -17,6 +17,7 @@
 package com.github.j2objccontrib.j2objcgradle.tasks
 
 import com.github.j2objccontrib.j2objcgradle.J2objcConfig
+import com.github.j2objccontrib.j2objcgradle.J2objcPlugin
 import com.google.common.annotations.VisibleForTesting
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
@@ -31,6 +32,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.UnionFileTree
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.WorkResult
@@ -744,5 +746,29 @@ class Utils {
             return Integer.MAX_VALUE
         }
         assert false
+    }
+
+    static void requireJavaPlugin(Project project) {
+        if (!project.plugins.hasPlugin(JavaPlugin)) {
+            String message = "$project is not a Java project.\n" +
+                             "dependsOnJ2ObjcLib can only automatically resolve a\n" +
+                             "dependency on a Java project also converted using the\n" +
+                             "J2ObjC Gradle Plugin."
+            throw new InvalidUserDataException(message)
+        }
+    }
+
+    static void requireJ2objcPlugin(Project project) {
+        if (!project.plugins.hasPlugin(J2objcPlugin)) {
+            String message = "$project does not use the J2ObjC Gradle Plugin.\n" +
+                             "dependsOnJ2objcLib can be used only with another project that\n" +
+                             "itself uses the J2ObjC Gradle Plugin."
+            throw new InvalidUserDataException(message)
+        }
+    }
+
+    static void requireJ2ObjcAndJavaPlugin(Project project) {
+        requireJavaPlugin(project)
+        requireJ2objcPlugin(project)
     }
 }
