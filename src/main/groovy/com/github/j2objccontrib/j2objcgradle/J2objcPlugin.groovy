@@ -53,6 +53,9 @@ class J2objcPlugin implements Plugin<Project> {
                                 'https://github.com/j2objc-contrib/j2objc-gradle/releases')
         }
 
+        new File(project.buildDir, "mainTranslationExtraction").mkdirs()
+        new File(project.buildDir, "testTranslationExtraction").mkdirs()
+
         // This avoids a lot of "project." prefixes, such as "project.tasks.create"
         project.with {
             getPluginManager().apply(JavaPlugin)
