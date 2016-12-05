@@ -105,6 +105,7 @@ class NativeCompilation {
                                          "not work correctly with Xcode 7 or higher."
                             throw new InvalidUserDataException(msg)
                         }
+                        clangArgs += ["-mmacosx-version-min=${config.minVersionOsx}"]
                         linkerArgs += ["-L$j2objcPath/lib/macosx"]
                         linkerArgs += ['-framework', 'ExceptionHandling']
                         break
