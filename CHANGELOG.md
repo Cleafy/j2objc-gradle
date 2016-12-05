@@ -26,6 +26,15 @@ Breaking changes/functionality:
 Code quality:
 * TBD
 
+## v0.7.12
+Fixes:
+
+  - use minimum MacOsX version during compilation
+
+## v0.7.11
+Fixes:
+
+  - ensure that hacked java sourcesets have a valid directory
 
 ## v0.7.10
 Fixes:
