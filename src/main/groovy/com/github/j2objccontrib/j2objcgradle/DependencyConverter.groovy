@@ -55,7 +55,8 @@ class DependencyConverter {
             'org.mockito:mockito-core',
             'com.google.j2objc:j2objc-annotations',
             'org.hamcrest:hamcrest-core',
-            'com.google.protobuf:protobuf-java']
+            'com.google.protobuf:protobuf-java',
+            'org.json:json']
 
     DependencyConverter(Project project, J2objcConfig j2objcConfig) {
         this.project = project
