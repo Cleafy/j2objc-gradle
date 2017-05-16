@@ -26,6 +26,11 @@ Breaking changes/functionality:
 Code quality:
 * TBD
 
+## v0.7.13
+Fixes:
+
+  - use bundled `org.json:json` library
+
 ## v0.7.12
 Fixes:
 
