@@ -24,6 +24,9 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.nativeplatform.NativeLibraryBinary
+import org.gradle.nativeplatform.StaticLibraryBinary
+import org.gradle.platform.base.BinaryContainer
 
 /**
  * Uses 'lipo' binary to combine multiple architecture flavors of a library into a
@@ -35,10 +38,17 @@ class PackLibrariesTask extends DefaultTask {
     // Generated ObjC binaries
     @InputFiles
     ConfigurableFileCollection getLibrariesFiles() {
-        String staticLibraryPath = "${project.buildDir}/binaries/${project.name}-j2objcStaticLibrary"
-        return project.files(getActiveArchs().collect { String arch ->
-            "$staticLibraryPath/$arch$buildType/lib${project.name}-j2objc.a"
-        })
+        BinaryContainer bins = (BinaryContainer) project.property('binaries')
+
+        def libs = bins.
+                findAll({it instanceof NativeLibraryBinary}).
+                findAll({it instanceof StaticLibraryBinary}).
+                collect({(NativeLibraryBinary) it}).
+                findAll({it.buildType.name.equalsIgnoreCase(buildType)}).
+                findAll({it.targetPlatform.architecture.name in getActiveArchs()}).
+                collect {((StaticLibraryBinary)it).staticLibraryFile}
+
+        return project.files(libs)
     }
 
     // Debug or Release
