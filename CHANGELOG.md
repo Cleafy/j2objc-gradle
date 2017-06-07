@@ -26,6 +26,11 @@ Breaking changes/functionality:
 Code quality:
 * TBD
 
+## v0.7.14
+Fixes:
+
+  - cannot build projects with initial capital char
+
 ## v0.7.13
 Fixes:
 
