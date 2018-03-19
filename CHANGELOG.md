@@ -26,6 +26,11 @@ Breaking changes/functionality:
 Code quality:
 * TBD
 
+## v0.7.15
+New features:
+
+  - custom test native sources
+
 ## v0.7.14
 Fixes:
 
