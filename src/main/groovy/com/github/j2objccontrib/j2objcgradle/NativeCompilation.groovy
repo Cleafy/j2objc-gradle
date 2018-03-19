@@ -246,10 +246,12 @@ class NativeCompilation {
                             objc {
                                 source {
                                     srcDirs "${srcGenTestDir}", "${buildDir}/j2objcHackToForceTestCompilation"
+                                    srcDirs j2objcConfig.extraObjcTestSrcDirs
                                     include '**/*.m'
                                 }
                                 exportedHeaders {
                                     srcDirs "${srcGenTestDir}"
+                                    srcDirs j2objcConfig.extraObjcTestHeadersDirs
                                     include '**/*.h'
                                 }
                             }
@@ -270,6 +272,9 @@ class NativeCompilation {
                                 // should use NativeLibraryBinary.headerDirs but it is not available yet ( bad lifecycle usage )
                                 objcCompiler.args "-I${beforeProject.buildDir}/j2objcSrcGenMain"
                                 for(String path : J2objcConfig.from(beforeProject).extraObjcHeadersDirs) {
+                                    objcCompiler.args "-I${beforeProject.file(path)}"
+                                }
+                                for(String path : J2objcConfig.from(beforeProject).extraObjcTestHeadersDirs) {
                                     objcCompiler.args "-I${beforeProject.file(path)}"
                                 }
                             }
