@@ -16,7 +16,7 @@
 // Based on https://plugins.gradle.org/docs/publish-plugin
 
 plugins {
-    id "com.gradle.plugin-publish" version "0.9.0"
+    id "com.gradle.plugin-publish" version "0.9.7"
     // Outputs a BuildInfo.java file with information about the git repo;
     // also fails plugin publishing if your git working directory is unclean.
     // Note this only enforces that the code you are publishing is committed
