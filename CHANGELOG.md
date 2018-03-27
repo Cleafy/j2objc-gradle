@@ -26,6 +26,11 @@ Breaking changes/functionality:
 Code quality:
 * TBD
 
+## v0.7.16
+Changes:
+
+  - custom headers are prepended to standard ones
+
 ## v0.7.15
 New features:
 
