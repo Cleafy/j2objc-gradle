@@ -38,6 +38,13 @@ class PackLibrariesTask extends DefaultTask {
     // Generated ObjC binaries
     @InputFiles
     ConfigurableFileCollection getLibrariesFiles() {
+        if(Utils.checkGradleVersion(false)) {
+            String staticLibraryPath = "${project.buildDir}/binaries/${project.name}-j2objcStaticLibrary"
+            return project.files(getActiveArchs().collect { String arch ->
+                "$staticLibraryPath/$arch$buildType/lib${project.name}-j2objc.a"
+            })
+        }
+
         BinaryContainer bins = (BinaryContainer) project.property('binaries')
 
         def libs = bins.
