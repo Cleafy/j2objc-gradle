@@ -53,9 +53,7 @@ class TestTask extends DefaultTask {
         // inputs to this method, which is already an input via @InputFiles.
         J2objcConfig config = J2objcConfig.from(project)
 
-        FileTree allFiles = config.testSourceDirs.isEmpty() ?
-                            Utils.srcSet(project, 'test', 'java') :
-                            Utils.javaTrees(project, config.testSourceDirs);
+        FileTree allFiles = Utils.srcSet(project, 'test', 'java')
 
         if (config.translatePattern != null) {
             allFiles = allFiles.matching(config.translatePattern)

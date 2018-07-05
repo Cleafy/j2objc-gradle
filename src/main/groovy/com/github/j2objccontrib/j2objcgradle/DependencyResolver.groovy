@@ -173,10 +173,20 @@ class DependencyResolver {
         j2objcPrebuild.dependsOn(beforeProject.tasks.getByName('j2objcBuild'))
         j2objcPrebuild.dependsOn(beforeProject.tasks.getByName('jar'))
 
-        AbstractArchiveTask jarTask = beforeProject.tasks.getByName('jar') as AbstractArchiveTask
-        project.logger.debug("$project:j2objcTranslate must use ${jarTask.archivePath}")
-        // TODO: Handle separate classpaths for main translation and test translation.
-        j2objcConfig.translateClasspaths += jarTask.archivePath.absolutePath
+        beforeProject.tasks
+                .findAll {t -> t instanceof AbstractArchiveTask}
+                .collect {t -> (AbstractArchiveTask)t}
+                .each { jarTask ->
+            project.logger.debug("${project.name}:j2objcPreBuild dependsOn ${beforeProject.name}:${jarTask.name}")
+            j2objcPrebuild.dependsOn(jarTask)
+            project.logger.debug("$project:j2objcTranslate must use ${jarTask.archivePath}")
+            if (isTest) {
+                j2objcConfig.translateTestClasspaths += jarTask.archivePath.absolutePath
+            } else {
+                j2objcConfig.translateClasspaths += jarTask.archivePath.absolutePath
+            }
+        }
+
         j2objcConfig.nativeCompilation.dependsOnJ2objcLib(beforeProject, isTest)
     }
 

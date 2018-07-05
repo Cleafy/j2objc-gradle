@@ -250,6 +250,21 @@ class J2objcConfig {
     }
 
     /**
+     *  Local jars for translation e.g.: "lib/json-20140107.jar", "lib/somelib.jar".
+     *  This will be added to j2objc as a '-classpath' argument.
+     */
+    List<String> translateTestClasspaths = new ArrayList<>()
+    /**
+     *  Local jars for translation e.g.: "lib/json-20140107.jar", "lib/somelib.jar".
+     *  This will be added to j2objc as a '-classpath' argument.
+     *
+     *  @param translateClasspaths add libraries for -classpath argument
+     */
+    void translateTestClasspaths(String... translateClasspaths) {
+        appendArgs(this.translateClasspaths, 'translateTestClasspaths', true, translateClasspaths)
+    }
+
+    /**
      * Source jars for translation e.g.: "lib/json-20140107-sources.jar"
      */
     List<String> translateSourcepaths = new ArrayList<>()

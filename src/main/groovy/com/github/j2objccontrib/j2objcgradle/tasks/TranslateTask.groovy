@@ -57,9 +57,7 @@ class TranslateTask extends DefaultTask {
     FileCollection getMainSrcFiles() {
         J2objcConfig config = J2objcConfig.from(project);
 
-        FileTree allFiles = config.mainSourceDirs.isEmpty() ?
-                            Utils.srcSet(project, 'main', 'java') :
-                            Utils.javaTrees(project, config.mainSourceDirs);
+        FileTree allFiles = Utils.srcSet(project, 'main', 'java')
         if (config.translatePattern != null) {
             allFiles = allFiles.matching(config.translatePattern)
         }
@@ -73,9 +71,7 @@ class TranslateTask extends DefaultTask {
     FileCollection getTestSrcFiles() {
         J2objcConfig config = J2objcConfig.from(project);
 
-        FileTree allFiles = config.testSourceDirs.isEmpty() ?
-                            Utils.srcSet(project, 'test', 'java') :
-                            Utils.javaTrees(project, config.testSourceDirs);
+        FileTree allFiles = Utils.srcSet(project, 'test', 'java')
         if (config.translatePattern != null) {
             allFiles = allFiles.matching(config.translatePattern)
         }
@@ -90,6 +86,7 @@ class TranslateTask extends DefaultTask {
         FileCollection allFiles = getMainSrcFiles()
         allFiles += getTestSrcFiles()
         allFiles += project.files(getTranslateClasspaths())
+        allFiles += project.files(getTranslateTestClasspath())
         allFiles += project.files(getTranslateSourcepaths())
         // Only care about changes in the generatedSourceDirs paths and not the contents
         // It assumes that any changes in generated code comes from change in non-generated code
@@ -116,6 +113,9 @@ class TranslateTask extends DefaultTask {
 
     @Input
     List<String> getTranslateClasspaths() { return J2objcConfig.from(project).translateClasspaths }
+
+    @Input
+    List<String> getTranslateTestClasspath() { return J2objcConfig.from(project).translateTestClasspaths }
 
     @Input
     List<String> getTranslateSourcepaths() { return J2objcConfig.from(project).translateSourcepaths }
@@ -280,6 +280,7 @@ class TranslateTask extends DefaultTask {
                 project.files(Utils.srcSet(project, 'main', 'java').getSrcDirs()),
                 project.files(Utils.srcSet(project, 'test', 'java').getSrcDirs()),
                 project.files(getTranslateSourcepaths()),
+                project.files(getTranslateTestClasspath()),
                 project.files(getGeneratedSourceDirs())
         ])
         doTranslate(sourcepathDirs, srcGenTestDir, testTranslateArgs, testSrcFilesChanged, "testSrcFilesArgFile")
@@ -325,6 +326,7 @@ class TranslateTask extends DefaultTask {
 
         UnionFileCollection classpathFiles = new UnionFileCollection([
                 project.files(getTranslateClasspaths()),
+                project.files(getTranslateTestClasspath()),
                 project.files(Utils.j2objcLibs(getJ2objcHome(), getTranslateJ2objcLibs()))
         ])
         // TODO: comment explaining ${project.buildDir}/classes

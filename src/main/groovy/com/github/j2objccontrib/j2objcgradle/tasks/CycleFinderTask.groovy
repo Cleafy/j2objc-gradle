@@ -67,6 +67,7 @@ class CycleFinderTask extends DefaultTask {
         return new UnionFileCollection([
                 getSrcInputFiles(),
                 project.files(getTranslateClasspaths()),
+                project.files(getTranslateTestClasspaths()),
                 project.files(getTranslateSourcepaths())
         ])
     }
@@ -82,6 +83,9 @@ class CycleFinderTask extends DefaultTask {
 
     @Input
     List<String> getTranslateClasspaths() { return J2objcConfig.from(project).translateClasspaths }
+    
+    @Input
+    List<String> getTranslateTestClasspaths() { return J2objcConfig.from(project).translateTestClasspaths }
 
     @Input
     List<String> getTranslateSourcepaths() { return J2objcConfig.from(project).translateSourcepaths }
@@ -130,6 +134,7 @@ class CycleFinderTask extends DefaultTask {
 
         UnionFileCollection classpathFiles = new UnionFileCollection([
                 project.files(getTranslateClasspaths()),
+                project.files(getTranslateTestClasspaths()),
                 project.files(Utils.j2objcLibs(getJ2objcHome(), getTranslateJ2objcLibs()))
         ])
         // TODO: comment explaining ${project.buildDir}/classes

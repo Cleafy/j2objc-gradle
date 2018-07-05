@@ -31,6 +31,8 @@ import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.internal.file.DefaultSourceDirectorySet
+import org.gradle.api.internal.file.IdentityFileResolver
 import org.gradle.api.internal.file.UnionFileTree
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
@@ -425,6 +427,22 @@ class Utils {
 
         assert fileType == 'java' || fileType == 'resources'
         assert sourceSetName == 'main' || sourceSetName == 'test'
+        def config = J2objcConfig.from(proj)
+
+        if(config != null) {
+            List<String> customSrcs = sourceSetName == 'main' ? config.mainSourceDirs : config.testSourceDirs;
+
+            if (!customSrcs.isEmpty()) {
+                SourceDirectorySet srcs = new DefaultSourceDirectorySet('j2objc_custom_' + sourceSetName + '_' + fileType, new IdentityFileResolver());
+                String subDirName = fileType == 'java' ? fileType : 'res';
+                String ext = fileType == 'java' ? '.java' : ''
+                srcs.getFilter().include("**/*" + ext)
+
+                customSrcs.each { srcs.srcDir(it + '/' + sourceSetName + '/' + subDirName) }
+                return srcs;
+            }
+        }
+
         JavaPluginConvention javaConvention = proj.getConvention().getPlugin(JavaPluginConvention)
         SourceSet sourceSet = javaConvention.sourceSets.findByName(sourceSetName)
         // For standard fileTypes 'java' and 'resources,' per contract this cannot be null.
