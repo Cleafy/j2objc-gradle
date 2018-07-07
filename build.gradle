@@ -25,8 +25,13 @@ plugins {
 }
 apply plugin: 'groovy'
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile gradleApi()
+    compile group: 'com.google.guava', name: 'guava-annotations', version: 'r03'
 }
 
 

@@ -38,6 +38,11 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.WorkResult
+import org.gradle.model.ModelMap
+import org.gradle.model.internal.core.ModelPath
+import org.gradle.model.internal.type.ModelType
+import org.gradle.platform.base.BinarySpec
+import org.gradle.platform.base.ComponentSpecContainer
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 import org.gradle.process.internal.ExecException
@@ -70,12 +75,6 @@ class Utils {
         final GradleVersion minGradleVersion = GradleVersion.version('2.4')
         if (gradleVersion.compareTo(GradleVersion.version('2.4')) < 0) {
             errorMsg = "J2ObjC Gradle Plugin requires minimum Gradle version: $minGradleVersion"
-        }
-
-        final GradleVersion unsupportedGradleVersion = GradleVersion.version('2.9')
-        if (gradleVersion.compareTo(unsupportedGradleVersion) >= 0) {
-            errorMsg = "Please use Gradle 2.8 as $unsupportedGradleVersion is unsupported:\n" +
-                       "https://github.com/j2objc-contrib/j2objc-gradle/issues/568"
         }
 
         if (!errorMsg.isEmpty()) {
@@ -782,6 +781,26 @@ class Utils {
                              "dependsOnJ2objcLib can be used only with another project that\n" +
                              "itself uses the J2ObjC Gradle Plugin."
             throw new InvalidUserDataException(message)
+        }
+    }
+
+    private static boolean haveBinaries() {
+        final GradleVersion gradleVersion = GradleVersion.current()
+
+        final GradleVersion unsupportedGradleVersion = GradleVersion.version('2.9')
+        return gradleVersion < unsupportedGradleVersion
+    }
+
+    // get binaries, read only
+    static ModelMap<BinarySpec> getBinaries(Project project) {
+        if (haveBinaries()) {
+            return (ModelMap<BinarySpec>) project.property('binaries')
+        } else {
+            def modelRegistry = ((org.gradle.api.internal.project.ProjectInternal) project).getModelRegistry()
+
+            def components = modelRegistry.find(ModelPath.path('components'), ModelType.of(ComponentSpecContainer.class))
+
+            return components.withType(BinarySpec.class)
         }
     }
 

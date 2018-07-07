@@ -26,7 +26,6 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.nativeplatform.NativeLibraryBinary
 import org.gradle.nativeplatform.StaticLibraryBinary
-import org.gradle.platform.base.BinaryContainer
 
 /**
  * Uses 'lipo' binary to combine multiple architecture flavors of a library into a
@@ -45,7 +44,7 @@ class PackLibrariesTask extends DefaultTask {
             })
         }
 
-        BinaryContainer bins = (BinaryContainer) project.property('binaries')
+        def bins = Utils.getBinaries(project)
 
         def libs = bins.
                 findAll({it instanceof NativeLibraryBinary}).

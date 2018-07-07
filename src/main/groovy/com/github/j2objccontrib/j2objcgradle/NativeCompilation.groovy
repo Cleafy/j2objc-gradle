@@ -29,6 +29,7 @@ import org.gradle.nativeplatform.NativeLibraryBinary
 import org.gradle.nativeplatform.NativeLibrarySpec
 import org.gradle.nativeplatform.toolchain.Clang
 import org.gradle.nativeplatform.toolchain.GccPlatformToolChain
+import org.gradle.platform.base.BinarySpec
 import org.gradle.platform.base.Platform
 
 /**
@@ -236,6 +237,7 @@ class NativeCompilation {
                             j2objcConfig.extraNativeLibs.each { Map nativeLibSpec ->
                                 lib nativeLibSpec
                             }
+                            setBinaryArgs(project, it)
                         }
                     }
 
@@ -285,57 +287,12 @@ class NativeCompilation {
                             j2objcConfig.linkJ2objcTestLibs.each { String libArg ->
                                 linker.args "-l$libArg"
                             }
+
+                            setBinaryArgs(project, it)
                         }
+
+
                         targetPlatform 'x86_64'
-                    }
-                }
-            }
-
-            // We need to run clang with the arguments that j2objcc would usually pass.
-            binaries.all {
-                // Only want to modify the Objective-C toolchain, not the JDK one.
-                if (toolChain in Clang) {
-                    String j2objcPath = Utils.j2objcHome(project)
-
-                    // If you want to override the arguments passed to the compiler and linker,
-                    // you must configure the binaries in your own build.gradle.
-                    // See "Gradle User Guide: 54.11. Configuring the compiler, assembler and linker"
-                    // https://docs.gradle.org/current/userguide/nativeBinaries.html#N16030
-                    // TODO: Consider making this configuration easier using plugin extension.
-                    // If we do that, however, we will become inconsistent with Gradle Objective-C building.
-                    objcCompiler.args "-I$j2objcPath/include"
-                    objcCompiler.args '-Wno-parentheses', '-fno-strict-overflow', '-Wno-nullability-completeness'
-                    objcCompiler.args '-std=c11'
-                    objcCompiler.args j2objcConfig.extraObjcCompilerArgs
-
-                    linker.args '-ObjC'
-
-                    // J2ObjC provided libraries:
-                    // TODO: should we link to all? Or just the 'standard' J2ObjC libraries?
-                    linker.args '-ljre_emul'
-                    j2objcConfig.linkJ2objcLibs.each { String libArg ->
-                        linker.args "-l$libArg"
-                    }
-
-                    // J2ObjC iOS library dependencies:
-                    linker.args '-lc++'                    // C++ runtime for protobuf runtime
-                    linker.args '-licucore'                // java.text
-                    linker.args '-lz'                      // java.util.zip
-                    linker.args '-framework', 'Foundation' // core ObjC classes: NSObject, NSString
-                    linker.args '-framework', 'Security'   // secure hash generation
-                    linker.args j2objcConfig.extraLinkerArgs
-
-                    if (buildType == buildTypes.debug) {
-                        // Full debugging information.
-                        objcCompiler.args '-g'
-                        objcCompiler.args '-DDEBUG=1'
-                    } else {  // release
-                        // Per https://raw.githubusercontent.com/llvm-mirror/clang/8eb384a97cfdc244a5ab81026677bcbaf8cf2ecf/docs/CommandGuide/clang.rst
-                        // this is a moderate level of optimization with extra optimizations
-                        // to reduce code size.  It's use in release builds was verified in Xcode 7,
-                        // and we aim to match the behavior, per:
-                        // https://developer.apple.com/library/ios/qa/qa1795/_index.html#//apple_ref/doc/uid/DTS40014195-CH1-COMPILER
-                        objcCompiler.args '-Os'
                     }
                 }
             }
@@ -344,15 +301,67 @@ class NativeCompilation {
             // See Gradle User Guide: 54.14.5. Building all possible variants
             // https://docs.gradle.org/current/userguide/nativeBinaries.html#N161B3
             task('j2objcBuildObjcDebug').configure {
-                dependsOn binaries.withType(NativeLibraryBinary).matching { NativeLibraryBinary lib ->
+                dependsOn Utils.getBinaries(project).withType(NativeLibraryBinary).findAll { NativeLibraryBinary lib ->
                     // Internal build type is lowercase 'debug'
                     lib.buildable && lib.buildType.name == 'debug'
                 }
             }
             task('j2objcBuildObjcRelease').configure {
-                dependsOn binaries.withType(NativeLibraryBinary).matching { NativeLibraryBinary lib ->
+                dependsOn Utils.getBinaries(project).withType(NativeLibraryBinary).findAll { NativeLibraryBinary lib ->
                     // Internal build type is lowercase 'release'
                     lib.buildable && lib.buildType.name == 'release'
+                }
+            }
+        }
+    }
+
+    // We need to run clang with the arguments that j2objcc would usually pass.
+    private static setBinaryArgs(Project project, BinarySpec binary) {
+        J2objcConfig j2objcConfig = J2objcConfig.from(project)
+        binary.with {
+            // Only want to modify the Objective-C toolchain, not the JDK one.
+            if (toolChain in Clang) {
+                String j2objcPath = Utils.j2objcHome(project)
+
+                // If you want to override the arguments passed to the compiler and linker,
+                // you must configure the binaries in your own build.gradle.
+                // See "Gradle User Guide: 54.11. Configuring the compiler, assembler and linker"
+                // https://docs.gradle.org/current/userguide/nativeBinaries.html#N16030
+                // TODO: Consider making this configuration easier using plugin extension.
+                // If we do that, however, we will become inconsistent with Gradle Objective-C building.
+                objcCompiler.args "-I$j2objcPath/include"
+                objcCompiler.args '-Wno-parentheses', '-fno-strict-overflow', '-Wno-nullability-completeness'
+                objcCompiler.args '-std=c11'
+                objcCompiler.args j2objcConfig.extraObjcCompilerArgs
+
+                linker.args '-ObjC'
+
+                // J2ObjC provided libraries:
+                // TODO: should we link to all? Or just the 'standard' J2ObjC libraries?
+                linker.args '-ljre_emul'
+                j2objcConfig.linkJ2objcLibs.each { String libArg ->
+                    linker.args "-l$libArg"
+                }
+
+                // J2ObjC iOS library dependencies:
+                linker.args '-lc++'                    // C++ runtime for protobuf runtime
+                linker.args '-licucore'                // java.text
+                linker.args '-lz'                      // java.util.zip
+                linker.args '-framework', 'Foundation' // core ObjC classes: NSObject, NSString
+                linker.args '-framework', 'Security'   // secure hash generation
+                linker.args j2objcConfig.extraLinkerArgs
+
+                if (buildType.name.toLowerCase() == "debug") {
+                    // Full debugging information.
+                    objcCompiler.args '-g'
+                    objcCompiler.args '-DDEBUG=1'
+                } else {  // release
+                    // Per https://raw.githubusercontent.com/llvm-mirror/clang/8eb384a97cfdc244a5ab81026677bcbaf8cf2ecf/docs/CommandGuide/clang.rst
+                    // this is a moderate level of optimization with extra optimizations
+                    // to reduce code size.  It's use in release builds was verified in Xcode 7,
+                    // and we aim to match the behavior, per:
+                    // https://developer.apple.com/library/ios/qa/qa1795/_index.html#//apple_ref/doc/uid/DTS40014195-CH1-COMPILER
+                    objcCompiler.args '-Os'
                 }
             }
         }
