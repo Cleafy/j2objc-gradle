@@ -590,6 +590,11 @@ class J2objcConfig {
         return ConfigureUtil.configure(cl, testPattern)
     }
 
+    /**
+     * Class used to run tests. {@code org.junit.runner.JUnitCore} is the default one
+     */
+    String testMainClass = 'org.junit.runner.JUnitCore'
+
     // Native build customization.
     /**
      * Directories of Objective-C source to compile in addition to the

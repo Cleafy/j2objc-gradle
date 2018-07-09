@@ -65,6 +65,9 @@ class TestTask extends DefaultTask {
     }
 
     @Input
+    String getTestMainClass() { return J2objcConfig.from(project).testMainClass }
+
+    @Input
     List<String> getTestArgs() { return J2objcConfig.from(project).testArgs }
 
     @Input
@@ -124,7 +127,7 @@ class TestTask extends DefaultTask {
         try {
             Utils.projectExec(project, stdout, stderr, testCountRegex, {
                 executable copiedTestBinary
-                args 'org.junit.runner.JUnitCore'
+                args getTestMainClass()
 
                 getTestArgs().each { String testArg ->
                     args testArg
