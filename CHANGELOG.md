@@ -26,6 +26,20 @@ Breaking changes/functionality:
 Code quality:
 * TBD
 
+## v0.7.18
+New features:
+
+  - custom test main class
+
+Fixes:
+
+  - fixed custom sources path
+
+## v0.7.17
+New features:
+
+  - allow custom test sources
+
 ## v0.7.16
 Changes:
 
