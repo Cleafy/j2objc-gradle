@@ -434,11 +434,10 @@ class Utils {
 
             if (!customSrcs.isEmpty()) {
                 SourceDirectorySet srcs = new DefaultSourceDirectorySet('j2objc_custom_' + sourceSetName + '_' + fileType, new IdentityFileResolver());
-                String subDirName = fileType == 'java' ? fileType : 'res';
                 String ext = fileType == 'java' ? '.java' : ''
                 srcs.getFilter().include("**/*" + ext)
 
-                customSrcs.each { srcs.srcDir(it + '/' + sourceSetName + '/' + subDirName) }
+                customSrcs.each { srcs.srcDir(it) }
                 return srcs;
             }
         }
