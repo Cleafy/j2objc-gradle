@@ -26,6 +26,11 @@ Breaking changes/functionality:
 Code quality:
 * TBD
 
+## v0.7.19
+Fixes:
+
+  - fixed guava library for j2objc 2.x
+
 ## v0.7.18
 New features:
 
