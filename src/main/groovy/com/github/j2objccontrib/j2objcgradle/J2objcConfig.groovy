@@ -328,7 +328,7 @@ class J2objcConfig {
             // Memory annotations, e.g. @Weak, @AutoreleasePool
             "j2objc_annotations.jar",
             // Libraries that have CycleFinder fixes, e.g. @Weak and code removal
-            "j2objc_guava.jar", "j2objc_junit.jar", "jre_emul.jar",
+            "j2objc_guava.jar", "j2objc_junit.jar", "jre_emul.jar", "guava-19.0.jar",
             // Libraries that don't need CycleFinder fixes
             "javax.inject-1.jar", "jsr305-3.0.0.jar",
             "mockito-core-1.9.5.jar", "hamcrest-core-1.3.jar", "protobuf_runtime.jar"]
